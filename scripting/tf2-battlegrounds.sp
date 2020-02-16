@@ -26,7 +26,7 @@ supply drops could give ammo
 #define PLUGIN_NAME "[TF2] Battlegrounds"
 #define PLUGIN_AUTHOR "Drixevel"
 #define PLUGIN_DESCRIPTION "PubG/Fortnite/Apex/H1Z1/RR clone in TF2."
-#define PLUGIN_VERSION "1.0.0"
+#define PLUGIN_VERSION "1.0.1"
 #define PLUGIN_URL "https://drixevel.dev/"
 
 #define FLASHLIGHT_CLICKSOUND "ui/panel_open.wav"
@@ -139,68 +139,8 @@ public void OnPluginStart()
 	g_WeaponAmmo = new StringMap();
 
 	g_Sync_RoundTimer = CreateHudSynchronizer();
-	
-	//Primary
-	g_RandomWeapons.Push(56);			//Huntsman
-	g_WeaponWorldModels.SetString("56", "models/weapons/c_models/c_bow/c_bow.mdl");
-	g_WeaponMags.SetValue("56", 1);
-	g_WeaponAmmo.SetValue("56", 14);
 
-	g_RandomWeapons.Push(230);			//The Sydney Sleeper
-	g_WeaponWorldModels.SetString("230", "models/workshop/weapons/c_models/c_sydney_sleeper/c_sydney_sleeper.mdl");
-	g_WeaponMags.SetValue("230", 12);
-	g_WeaponAmmo.SetValue("230", 12);
-
-	g_RandomWeapons.Push(402);			//The Bazaar Bargain
-	g_WeaponWorldModels.SetString("402", "models/workshop/weapons/c_models/c_bazaar_sniper/c_bazaar_sniper.mdl");
-	g_WeaponMags.SetValue("402", 10);
-	g_WeaponAmmo.SetValue("402", 10);
-
-	g_RandomWeapons.Push(1098);			//The Classic
-	g_WeaponWorldModels.SetString("1098", "models/weapons/c_models/c_tfc_sniperrifle/c_tfc_sniperrifle.mdl");
-	g_WeaponMags.SetValue("1098", 12);
-	g_WeaponAmmo.SetValue("1098", 12);
-
-	g_CrateWeapons.Push(1092);			//The Fortified Compound
-	g_WeaponWorldModels.SetString("1092", "models/workshop_partner/weapons/c_models/c_bow_thief/c_bow_thief.mdl");
-	g_WeaponMags.SetValue("1092", 1);
-	g_WeaponAmmo.SetValue("1092", 10);
-
-	g_CrateWeapons.Push(526);			//The Machina
-	g_WeaponWorldModels.SetString("526", "models/weapons/c_models/c_tfc_sniperrifle/c_tfc_sniperrifle.mdl");
-	g_WeaponMags.SetValue("526", 8);
-	g_WeaponAmmo.SetValue("526", 8);
-
-	//Secondary
-	g_RandomWeapons.Push(16);			//SMG
-	g_WeaponWorldModels.SetString("16", "models/weapons/c_models/c_smg/c_smg.mdl");
-	g_WeaponMags.SetValue("16", 25);
-	g_WeaponAmmo.SetValue("16", 25);
-
-	g_RandomWeapons.Push(57);			//The Razorback
-	g_WeaponWorldModels.SetString("57", "models/player/items/sniper/knife_shield.mdl");
-
-	g_RandomWeapons.Push(58);			//Jarate
-	g_WeaponWorldModels.SetString("58", "models/weapons/c_models/urinejar.mdl");
-
-	g_RandomWeapons.Push(231);			//Darwin's Danger Shield
-	g_WeaponWorldModels.SetString("231", "models/workshop/player/items/sniper/croc_shield/croc_shield.mdl");
-
-	g_RandomWeapons.Push(642);			//Cozy Camper
-	g_WeaponWorldModels.SetString("642", "models/workshop/player/items/sniper/xms_sniper_commandobackpack/xms_sniper_commandobackpack.mdl");
-
-	g_RandomWeapons.Push(751);			//The Cleaner's Carbine
-	g_WeaponWorldModels.SetString("751", "models/weapons/c_models/c_smg/c_smg.mdl");
-	g_WeaponMags.SetValue("751", 25);
-	g_WeaponAmmo.SetValue("751", 25);
-
-	//Melee
-	g_RandomWeapons.Push(171);			//The Tribalman's Shiv
-	g_WeaponWorldModels.SetString("171", "models/workshop/weapons/c_models/c_wood_machete/c_wood_machete.mdl");
-	g_RandomWeapons.Push(232);			//The Bushwacka
-	g_WeaponWorldModels.SetString("232", "models/workshop/weapons/c_models/c_croc_knife/c_croc_knife.mdl");
-	g_RandomWeapons.Push(401);			//The Shahanshah
-	g_WeaponWorldModels.SetString("401", "models/workshop/weapons/c_models/c_scimitar/c_scimitar.mdl");
+	ParseWeaponsData();
 	
 	RegAdminCmd("sm_regenweapons", Command_RegenWeapons, ADMFLAG_ROOT);
 	RegAdminCmd("sm_pausetimer", Command_PauseTimer, ADMFLAG_ROOT);
@@ -1358,7 +1298,7 @@ void StartWerewolfTimer()
 
 public Action Timer_WerewolfTimer(Handle timer, any data)
 {
-	//SpawnWerewolf();
+	SpawnWerewolf();
 	g_Timer_WerewolfTimer = null;
 	return Plugin_Stop;
 }
@@ -1388,7 +1328,7 @@ public Action Command_SpawnWolf(int client, int args)
 	return Plugin_Handled;
 }
 
-stock void SpawnWerewolf()
+void SpawnWerewolf()
 {
 	TriggerEntity("onPlayBell");
 
@@ -1557,8 +1497,6 @@ public void Hook_NPCThink(int iEnt)
 		
 		animationEntity.AddGestureSequence(iSequence);
 		g_flLastAttackTime = GetGameTime() + 1.0;
-		
-		loco.FaceTowards(vecTargetPos);
 
 		if (IsPlayerAlive(g_Target))
 		{
@@ -1576,6 +1514,7 @@ public void Hook_NPCThink(int iEnt)
 		}	
 	}
 
+	loco.FaceTowards(vecTargetPos);
 	loco.Run();
 	
 	int iSequence = GetEntProp(iEnt, Prop_Send, "m_nSequence");
@@ -1781,4 +1720,83 @@ public Action TF2_OnPlayerDamaged(int victim, TFClassType victimclass, int& atta
 	}
 
 	return Plugin_Continue;
+}
+
+void ParseWeaponsData()
+{
+	//Huntsman
+	g_RandomWeapons.Push(56);
+	g_WeaponWorldModels.SetString("56", "models/weapons/c_models/c_bow/c_bow.mdl");
+	g_WeaponMags.SetValue("56", 1);
+	g_WeaponAmmo.SetValue("56", 14);
+
+	//The Sydney Sleeper
+	g_RandomWeapons.Push(230);
+	g_WeaponWorldModels.SetString("230", "models/workshop/weapons/c_models/c_sydney_sleeper/c_sydney_sleeper.mdl");
+	g_WeaponMags.SetValue("230", 12);
+	g_WeaponAmmo.SetValue("230", 12);
+
+	//The Bazaar Bargain
+	g_RandomWeapons.Push(402);
+	g_WeaponWorldModels.SetString("402", "models/workshop/weapons/c_models/c_bazaar_sniper/c_bazaar_sniper.mdl");
+	g_WeaponMags.SetValue("402", 10);
+	g_WeaponAmmo.SetValue("402", 10);
+
+	//The Classic
+	g_RandomWeapons.Push(1098);
+	g_WeaponWorldModels.SetString("1098", "models/weapons/c_models/c_tfc_sniperrifle/c_tfc_sniperrifle.mdl");
+	g_WeaponMags.SetValue("1098", 12);
+	g_WeaponAmmo.SetValue("1098", 12);
+
+	//The Fortified Compound
+	g_CrateWeapons.Push(1092);
+	g_WeaponWorldModels.SetString("1092", "models/workshop_partner/weapons/c_models/c_bow_thief/c_bow_thief.mdl");
+	g_WeaponMags.SetValue("1092", 1);
+	g_WeaponAmmo.SetValue("1092", 10);
+
+	//The Machina
+	g_CrateWeapons.Push(526);
+	g_WeaponWorldModels.SetString("526", "models/weapons/c_models/c_tfc_sniperrifle/c_tfc_sniperrifle.mdl");
+	g_WeaponMags.SetValue("526", 8);
+	g_WeaponAmmo.SetValue("526", 8);
+
+	//SMG
+	g_RandomWeapons.Push(16);
+	g_WeaponWorldModels.SetString("16", "models/weapons/c_models/c_smg/c_smg.mdl");
+	g_WeaponMags.SetValue("16", 25);
+	g_WeaponAmmo.SetValue("16", 25);
+
+	//The Razorback
+	g_RandomWeapons.Push(57);
+	g_WeaponWorldModels.SetString("57", "models/player/items/sniper/knife_shield.mdl");
+
+	//Jarate
+	g_RandomWeapons.Push(58);
+	g_WeaponWorldModels.SetString("58", "models/weapons/c_models/urinejar.mdl");
+
+	//Darwin's Danger Shield
+	g_RandomWeapons.Push(231);
+	g_WeaponWorldModels.SetString("231", "models/workshop/player/items/sniper/croc_shield/croc_shield.mdl");
+
+	//Cozy Camper
+	g_RandomWeapons.Push(642);
+	g_WeaponWorldModels.SetString("642", "models/workshop/player/items/sniper/xms_sniper_commandobackpack/xms_sniper_commandobackpack.mdl");
+
+	//The Cleaner's Carbine
+	g_RandomWeapons.Push(751);
+	g_WeaponWorldModels.SetString("751", "models/weapons/c_models/c_smg/c_smg.mdl");
+	g_WeaponMags.SetValue("751", 25);
+	g_WeaponAmmo.SetValue("751", 25);
+
+	//The Tribalman's Shiv
+	g_RandomWeapons.Push(171);
+	g_WeaponWorldModels.SetString("171", "models/workshop/weapons/c_models/c_wood_machete/c_wood_machete.mdl");
+
+	//The Bushwacka
+	g_RandomWeapons.Push(232);
+	g_WeaponWorldModels.SetString("232", "models/workshop/weapons/c_models/c_croc_knife/c_croc_knife.mdl");
+
+	//The Shahanshah
+	g_RandomWeapons.Push(401);
+	g_WeaponWorldModels.SetString("401", "models/workshop/weapons/c_models/c_scimitar/c_scimitar.mdl");
 }
