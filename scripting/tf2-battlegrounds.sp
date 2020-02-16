@@ -26,7 +26,7 @@ supply drops could give ammo
 #define PLUGIN_NAME "[TF2] Battlegrounds"
 #define PLUGIN_AUTHOR "Drixevel"
 #define PLUGIN_DESCRIPTION "PubG/Fortnite/Apex/H1Z1/RR clone in TF2."
-#define PLUGIN_VERSION "1.0.1"
+#define PLUGIN_VERSION "1.0.2"
 #define PLUGIN_URL "https://drixevel.dev/"
 
 #define FLASHLIGHT_CLICKSOUND "ui/panel_open.wav"
@@ -1489,7 +1489,7 @@ public void Hook_NPCThink(int iEnt)
 	float vecTargetPos[3];
 	GetClientAbsOrigin(g_Target, vecTargetPos);
 
-	if (GetVectorDistance(vecNPCPos, vecTargetPos) > 200.0)
+	if (GetVectorDistance(vecNPCPos, vecTargetPos) > 150.0)
 		g_Pathing.Update(bot);
 	else if (g_flLastAttackTime <= GetGameTime())
 	{
