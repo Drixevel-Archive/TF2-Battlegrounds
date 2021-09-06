@@ -13,7 +13,6 @@ disable normal dropped weapons
 flashlights
 flashlights as drops
 supply drops could give ammo
-
 */
 
 /*****************************/
